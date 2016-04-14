@@ -244,13 +244,18 @@ function BreadcrumbDirective($interpolate, $breadcrumb, $rootScope) {
                     var viewScope = $breadcrumb.$getLastViewScope();
                     scope.steps = $breadcrumb.getStatesChain();
                     angular.forEach(scope.steps, function (step) {
-                        if (step.ncyBreadcrumb && step.ncyBreadcrumb.label) {
-                            var parseLabel = $interpolate(step.ncyBreadcrumb.label);
-                            step.ncyBreadcrumbLabel = parseLabel(viewScope);
-                            // Watcher for further viewScope updates
-                            registerWatchers(labelWatchers, parseLabel, viewScope, step);
-                        } else {
-                            step.ncyBreadcrumbLabel = step.name;
+                        if (step.ncyBreadcrumb) {
+                            if (step.ncyBreadcrumb.params)  {
+                                step.ncyStateParams = $interpolate(step.ncyBreadcrumb.params)(viewScope);
+                            }
+                            if (step.ncyBreadcrumb.label) {
+                                var parseLabel = $interpolate(step.ncyBreadcrumb.label);
+                                step.ncyBreadcrumbLabel = parseLabel(viewScope);
+                                // Watcher for further viewScope updates
+                                registerWatchers(labelWatchers, parseLabel, viewScope, step);
+                            } else {
+                                step.ncyBreadcrumbLabel = step.name;
+                            }
                         }
                     });
                 };
